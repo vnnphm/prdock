@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Deployment {
+  id            String   @id @default(uuid())
+
+  repoFullName  String
+  prNumber      Int
+  commitSha     String
+  status        DeploymentStatus
+
+  previewUrl    String?
+  imageUri      String?
+  serviceArn    String?
+  errorMessage  String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  events        GitHubWebhookEvent[]
+
+  @@unique([repoFullName, prNumber])
+}
+
+model GitHubWebhookEvent {
+  id               String   @id @default(uuid())
+
+  githubDeliveryId String   @unique
+  eventName        String
+  action           String
+
+  repoFullName     String
+  prNumber         Int
+  commitSha        String?
+
+  deploymentId     String
+  deployment       Deployment @relation(fields: [deploymentId], references: [id])
+
+  receivedAt       DateTime @default(now())
+}
+
+enum DeploymentStatus {
+  QUEUED
+  BUILDING
+  PUSHING_IMAGE
+  DEPLOYING
+  READY
+  FAILED
+  DELETING
+  DELETED
+}
