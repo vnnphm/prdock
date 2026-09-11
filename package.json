@@ -7,7 +7,8 @@
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
-    "test:integration": "docker compose up -d postgres && vitest run tests/integration",
+    "test:integration": "vitest run tests/integration",
+    "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "test": "vitest run",
@@ -31,6 +32,7 @@
     "vitest": "^4.1.11"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.1128.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "dotenv": "^17.4.2",

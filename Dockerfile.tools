@@ -1,0 +1,8 @@
+FROM node:22
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY . .
+
+CMD ["sh", "-c", "npx --no-install prisma migrate deploy --config prisma7.config.ts && npm test && npm run build"]

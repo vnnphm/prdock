@@ -11,5 +11,31 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  postgres-test:
+    image: postgres:16
+    profiles: [tooling]
+    environment:
+      POSTGRES_USER: prdock_test
+      POSTGRES_PASSWORD: local_test_only
+      POSTGRES_DB: prdock_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prdock_test -d prdock_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  tooling:
+    profiles: [tooling]
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
+    environment:
+      DATABASE_URL: postgresql://prdock_test:local_test_only@postgres-test:5432/prdock_test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+
 volumes:
   postgres_data:

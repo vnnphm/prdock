@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { githubPullRequestEventSchema } from "../../schemas/github-webhook.js";
-import { parseGitHubWebhook } from "../../services/parse-github-webhook.js";
-import { processGitHubEvent } from "../../services/process-github-event.js";
+import { parseGitHubWebhook } from "../../github/parse-github-webhook.js";
+import { processGitHubEvent } from "../../github/process-github-event.js";
 
 const router = Router()
 
