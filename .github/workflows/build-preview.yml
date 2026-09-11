@@ -1,5 +1,7 @@
 name: Build Preview Image
 
+
+
 on:
   workflow_dispatch:
     inputs:
@@ -19,6 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inspect GitHub OIDC claims
+        uses: github/actions-oidc-debugger@main
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,4 +40,4 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
           ECR_REPOSITORY: prdock-preview
           IMAGE_TAG: ${{ github.sha }}
-        run: ./scripts/entrypoint.sh
+        run: sh scripts/entrypoint.sh

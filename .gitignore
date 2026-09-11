@@ -142,10 +142,12 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
+
 /generated/prisma
 
 
 #Agent folders
+.agent
 .agents
 .claude
 .cursor
