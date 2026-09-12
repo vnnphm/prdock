@@ -21,8 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Verify AWS identity
-        run: aws sts get-caller-identity
 
 
       - name: Configure AWS credentials
@@ -30,6 +28,9 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-west-2
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
       - name: Get ECR registry
         id: ecr
