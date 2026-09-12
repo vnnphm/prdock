@@ -6,7 +6,7 @@ set -eu
 : "${ECR_REPOSITORY:?ECR_REPOSITORY is required}"
 : "${IMAGE_TAG:?IMAGE_TAG is required}"
 
-IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+IMAGE_URI="${ECR_REPO_URL}:${IMAGE_TAG}"
 
 echo "Logging into ECR..."
 
