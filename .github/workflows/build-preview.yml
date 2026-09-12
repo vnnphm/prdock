@@ -19,11 +19,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6.2.4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-west-2
@@ -36,6 +36,6 @@ jobs:
         env:
           AWS_REGION: us-west-2
           ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
-          ECR_REPOSITORY: prdock-preview
+          ECR_REPOSITORY: prdock-deployment
           IMAGE_TAG: ${{ github.sha }}
         run: sh scripts/entrypoint.sh
