@@ -3,6 +3,7 @@ set -eu
 
 : "${AWS_REGION:?AWS_REGION is required}"
 : "${ECR_REGISTRY:?ECR_REGISTRY is required}"
+: "${ECR_REPO_URL:?ECR_REPO_URL is required}"
 : "${ECR_REPOSITORY:?ECR_REPOSITORY is required}"
 : "${IMAGE_TAG:?IMAGE_TAG is required}"
 
