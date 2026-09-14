@@ -4,10 +4,6 @@ name: Build Preview Image
 
 on:
   workflow_dispatch:
-    inputs:
-      image_tag:
-        required: true
-        type: string
 
 jobs:
   build:
@@ -40,6 +36,6 @@ jobs:
         env:
           AWS_REGION: us-west-2
           ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
-          ECR_REPOSITORY: prdock-deployment
+          ECR_REPOSITORY: prview-deployment
           IMAGE_TAG: ${{ github.sha }}
         run: sh scripts/entrypoint.sh
