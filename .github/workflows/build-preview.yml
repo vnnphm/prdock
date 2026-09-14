@@ -1,7 +1,5 @@
 name: Build Preview Image
 
-
-
 on:
   workflow_dispatch:
 
@@ -17,8 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.4
         with:
@@ -28,7 +24,7 @@ jobs:
       - name: Verify AWS identity
         run: aws sts get-caller-identity
 
-      - name: Get ECR registry
+      - name: Login to ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
@@ -39,3 +35,41 @@ jobs:
           ECR_REPOSITORY: prview-deployments
           IMAGE_TAG: ${{ github.sha }}
         run: sh scripts/entrypoint.sh
+
+      - name: Register ECS task definition
+        env:
+          ECS_EXECUTION_ROLE_ARN: ${{ secrets.ECS_EXECUTION_ROLE_ARN }}
+          ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws ecs register-task-definition \
+            --family prdock-preview \
+            --network-mode awsvpc \
+            --requires-compatibilities FARGATE \
+            --cpu 256 \
+            --memory 512 \
+            --execution-role-arn "$ECS_EXECUTION_ROLE_ARN" \
+            --container-definitions "[
+              {
+                \"name\": \"preview\",
+                \"image\": \"$ECR_REGISTRY/prview-deployments:$IMAGE_TAG\",
+                \"essential\": true,
+                \"portMappings\": [
+                  {
+                    \"containerPort\": 3000,
+                    \"protocol\": \"tcp\"
+                  }
+                ]
+              }
+            ]"
+      - name: Run ECS task
+        env:
+          ECS_SUBNET_ID: ${{ secrets.ECS_SUBNET_ID }}
+          ECS_SECURITY_GROUP_ID: ${{ secrets.ECS_SECURITY_GROUP_ID }}
+          ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+        run: |
+          aws ecs run-task \
+            --cluster "$ECS_CLUSTER" \
+            --launch-type FARGATE \
+            --task-definition prdock-preview \
+            --network-configuration "awsvpcConfiguration={subnets=[$ECS_SUBNET_ID],securityGroups=[$ECS_SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
