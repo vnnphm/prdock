@@ -36,6 +36,6 @@ jobs:
         env:
           AWS_REGION: us-west-2
           ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
-          ECR_REPOSITORY: prview-deployment
+          ECR_REPOSITORY: prview-deployments
           IMAGE_TAG: ${{ github.sha }}
         run: sh scripts/entrypoint.sh
